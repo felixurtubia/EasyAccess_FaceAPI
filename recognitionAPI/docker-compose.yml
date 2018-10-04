@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  faceapi:
+    restart: always
+    build: .
+    environment:     
+    - VIRTUAL_HOST=easy.faceapi.boldware.cl
+    - VIRTUAL_PORT=80 
+    volumes:
+      - .:/code
+      
+networks:
+   default:
+      external:
+         name: nginxproxy_nginx-network

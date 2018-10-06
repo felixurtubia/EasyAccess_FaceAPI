@@ -34,7 +34,6 @@ def toImage(base64_data):
 
 
 class PersonSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(read_only=True)
     id_mongo = serializers.CharField(required=False)
     image1 = serializers.CharField(required=False, max_length=1000000)
     image2 = serializers.CharField(required=False, max_length=1000000)

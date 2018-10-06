@@ -33,17 +33,18 @@ def toImage(base64_data):
     return data
 
 
-class PersonSerializer(serializers.ModelSerializer):
-
+class PersonSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     id_mongo = serializers.CharField(required=False)
     image1 = serializers.CharField(required=False, max_length=1000000)
     image2 = serializers.CharField(required=False, max_length=1000000)
-    image3 = serializers.CharField(required=False, max_length=1000000)
-    
+    image3 = serializers.CharField(required=False, max_length=1000000) 
+
     def save(self, **kwargs):
         # Will be done on every save
         print("Id Mongo : ", kwargs['id_mongo'])
-        return super().save(**kwargs)
+        super().save(**kwargs)
+        return "User created"
 
     class Meta:
         model = Person

@@ -90,6 +90,14 @@ def prediction(image, model_path=None, distance_threshold=0.5):
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response("User created", status=status.HTTP_201_CREATED, headers=headers)
+
     def perform_create(self, serializer):
         #Se reciben las imagenes en base64, se traspasan a archivo y se sacan los encodings para serializar
         image1 = toImage(self.request.data.get('image1'))

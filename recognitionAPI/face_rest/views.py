@@ -56,13 +56,15 @@ def prediction(image, model_path=None, distance_threshold=0.5):
     """
     Recognizes an image from request 
     """
-    new_face = face_recognition.load_image_file(image)
-    new_face_locations = face_recognition.face_locations(new_face)
+    newFace = face_recognition.load_image_file(image)
+    newFaceLocations = face_recognition.face_locations(newFace)
 
-    if len(new_face_locations) == 0:
-        return []
-
-    new_faces_encodings = face_recognition.face_encodings(new_face, known_face_locations=new_face_locations)
+    if len(newFaceLocations) == 0:
+        return [2, "No Faces Found"]
+    """
+    There is something then
+    """
+    new_faces_encodings = face_recognition.face_encodings(newFace, known_face_locations=newFaceLocations)
 
     personas = Person.objects.all()
     for persona in personas:
@@ -70,21 +72,21 @@ def prediction(image, model_path=None, distance_threshold=0.5):
         encoding1 = [float(item) for item in encoding1]
         match1 = face_recognition.compare_faces([encoding1], new_faces_encodings[0])
         if match1[0]:
-            return persona.id_mongo
+            return [0, persona.id_mongo]
 
         encoding2 = persona.image2.split(',')
         encoding2 = [float(item) for item in encoding2]
         match2 = face_recognition.compare_faces([encoding2], new_faces_encodings[0])
         if match2[0]:
-            return persona.id_mongo
+            return [0, persona.id_mongo]
             
         encoding3 = persona.image3.split(',')
         encoding3 = [float(item) for item in encoding3]
         match3 = face_recognition.compare_faces([encoding3], new_faces_encodings[0])
         if match3[0]:
-            return persona.id_mongo
+            return [0, persona.id_mongo]
 
-    return "unknown"
+    return [1, "Something Happened"]
 
 
 class PersonViewSet(viewsets.ModelViewSet):
@@ -121,20 +123,33 @@ class getId(APIView):
     permission_classes = (permissions.AllowAny,)
 
     def get(self, request, format=None):
+        """
+        Listar todos los id de los residentes
+        """
         ids = [person.id_mongo for person in Person.objects.all()]
         return Response(ids)
 
     def post(self, request, format=None):
+        """
+        Post para identificar una persona
+        """
         print(self.request.data.get('image'))
         image = toImage(self.request.data.get('image'))
         matching = prediction(image)
-        #matching = []
-        #if len(matching) == 0:
-        #   print(len(matching))
-        #   return Response(data="unknown", status=status.HTTP_401_UNAUTHORIZED)
-        #return Response(data=matching[0][0])
-    
-        if matching == "unknown":
+        matching_status = matching[0]
+
+        if matching_status == 0:
+            """User Identified Correctly"""
+            return Response(data = matching[1])
+        elif matching_status == 1:
+            """User Not Identified"""
             return Response(status=status.HTTP_403_FORBIDDEN)
+        elif matching_status == 2:
+            """Invalid Foto"""
+            return Response()
+        elif matching_status == 3:
+            """More Than one USer in the Foto"""
+            return Response()
         else:
-            return Response(data=matching)
+            """There was an unknown problem"""
+            return Response()

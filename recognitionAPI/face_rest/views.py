@@ -107,23 +107,23 @@ class PersonViewSet(viewsets.ModelViewSet):
         image1 = toImage(self.request.data.get('image1'))
         image1 = face_recognition.face_encodings(face_recognition.load_image_file(image1))[0]
         image1 = ','.join(str(item) for item in image1)
-        date_image1 = datetime.now()
+        date_1 = datetime.now()
         image2 = toImage(self.request.data.get('image2'))
         image2 = face_recognition.face_encodings(face_recognition.load_image_file(image2))[0]
         image2 = ','.join(str(item) for item in image2)
-        date_image2 = datetime.now()
+        date_2 = datetime.now()
         image3 = toImage(self.request.data.get('image3'))
         image3 = face_recognition.face_encodings(face_recognition.load_image_file(image3))[0]
         image3 = ','.join(str(item) for item in image3)
-        date_image3 = datetime.now()
+        date_3 = datetime.now()
 
         serializer.save(id_mongo=self.request.data.get('idMongo'),
                             image1=image1,
-                            date_image1=date_image1,
+                            date_image1=date_1,
                             image2=image2,
-                            date_image1=date_image1,
+                            date_image2=date_2,
                             image3=image3,
-                            date_image1=date_image1)
+                            date_image3=date_3)
 
 
 class guests(APIView):
@@ -215,23 +215,21 @@ def updateUserImage(image, id_mongo):
     image = face_recognition.face_encodings(face_recognition.load_image_file(image1))[0]
     image = ','.join(str(item) for item in image1)
     user = Person.objects.filter(id_mongo=id_mongo)
-    date_image1 = user.date_image1
-    date_image2 = user.date_image2
-    date_image3 = user.date_image3
+    date_1 = user.date_image1
+    date_2 = user.date_image2
+    date_3 = user.date_image3
 
-    if(date_image1 > date_image2 and date_image1 > date_image3):
-        user.date_image1 = datetime.now()
+    if(date_1 > date_2 and date_1 > date_3):
+        user.date_1 = datetime.now()
         user.image1 = image
         user.save()
-    if(date_image2 > date_image1 and date_image2 > date_image3):
-        user.date_image2 = datetime.now()
+    if(date_2 > date_1 and date_2 > date_3):
+        user.date_2 = datetime.now()
         user.image2 = image
         user.save()
-    if(date_image3 > date_image2 and date_image3 > date_image1):
-        user.date_image3 = datetime.now()
+    if(date_3 > date_2 and date_3 > date_1):
+        user.date_3 = datetime.now()
         user.image3 = image
         user.save()
     else:
         print("Ocurrió un problema con las fechas")
-
-

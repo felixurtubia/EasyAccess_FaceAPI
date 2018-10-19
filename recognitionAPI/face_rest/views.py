@@ -74,19 +74,19 @@ def prediction(image, model_path=None, distance_threshold=0.5):
         encoding1 = [float(item) for item in encoding1]
         match1 = face_recognition.compare_faces([encoding1], new_faces_encodings[0])
         if match1[0]:
-            return [0, persona.id_mongo]
+            return [0, persona.id_mongo, persona]
 
         encoding2 = persona.image2.split(',')
         encoding2 = [float(item) for item in encoding2]
         match2 = face_recognition.compare_faces([encoding2], new_faces_encodings[0])
         if match2[0]:
-            return [0, persona.id_mongo]
+            return [0, persona.id_mongo, persona]
             
         encoding3 = persona.image3.split(',')
         encoding3 = [float(item) for item in encoding3]
         match3 = face_recognition.compare_faces([encoding3], new_faces_encodings[0])
         if match3[0]:
-            return [0, persona.id_mongo]
+            return [0, persona.id_mongo, persona]
 
     return [1, "Something Happened"]
 
@@ -194,7 +194,7 @@ class getId(APIView):
 
         if matching_status == 0:
             """User Identified Correctly"""
-            updateUserImage(image, matching[1])
+            updateUserImage(image, matching[2])
             return Response(data = matching[1])
         elif matching_status == 1:
             """User Not Identified"""
@@ -210,11 +210,12 @@ class getId(APIView):
             return Response()
 
 
-def updateUserImage(image, id_mongo):
+def updateUserImage(image, user):
     print("Updating user image")
     image = face_recognition.face_encodings(face_recognition.load_image_file(image))[0]
     image = ','.join(str(item) for item in image)
-    user = Person.objects.get(id_mongo=id_mongo)[0]
+    """user = Person.objects.get(id_mongo=id_mongo)
+    user = user[0]"""
     print("El usuario es:  ", user)
 
     date_1 = user.date_image1

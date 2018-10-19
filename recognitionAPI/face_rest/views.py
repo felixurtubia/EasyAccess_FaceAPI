@@ -119,8 +119,11 @@ class PersonViewSet(viewsets.ModelViewSet):
 
         serializer.save(id_mongo=self.request.data.get('idMongo'),
                             image1=image1,
+                            date_image1=date_image1,
                             image2=image2,
-                            image3=image3)
+                            date_image1=date_image1,
+                            image3=image3,
+                            date_image1=date_image1)
 
 
 class guests(APIView):
@@ -191,6 +194,7 @@ class getId(APIView):
 
         if matching_status == 0:
             """User Identified Correctly"""
+            updateUserImage(image, matching[1])
             return Response(data = matching[1])
         elif matching_status == 1:
             """User Not Identified"""
@@ -204,3 +208,30 @@ class getId(APIView):
         else:
             """There was an unknown problem"""
             return Response()
+
+
+def updateUserImage(image, id_mongo):
+    print("Updating user image")
+    image = face_recognition.face_encodings(face_recognition.load_image_file(image1))[0]
+    image = ','.join(str(item) for item in image1)
+    user = Person.objects.filter(id_mongo=id_mongo)
+    date_image1 = user.date_image1
+    date_image2 = user.date_image2
+    date_image3 = user.date_image3
+
+    if(date_image1 > date_image2 and date_image1 > date_image3):
+        user.date_image1 = datetime.now()
+        user.image1 = image
+        user.save()
+    if(date_image2 > date_image1 and date_image2 > date_image3):
+        user.date_image2 = datetime.now()
+        user.image2 = image
+        user.save()
+    if(date_image3 > date_image2 and date_image3 > date_image1):
+        user.date_image3 = datetime.now()
+        user.image3 = image
+        user.save()
+    else:
+        print("Ocurrió un problema con las fechas")
+
+

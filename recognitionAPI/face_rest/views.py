@@ -3,13 +3,14 @@ from rest_framework import viewsets, status
 from rest_framework.exceptions import NotAuthenticated
 #rom face_rest.serializers import PersonImageSerializer
 from face_rest.serializers import PersonSerializer
-from face.models import Person#, PersonImage
+from face.models import Person, Guest, Building
 from django.contrib.auth.models import User
 from recognitionAPI.startup import predict
 import face_recognition
 from sklearn import neighbors
 import pickle
 import math
+from datetime import datetime
 
 from rest_framework.views import APIView
 from rest_framework import authentication, permissions
@@ -45,6 +46,7 @@ def toImage(base64_data):
     if extension not in ("jpeg", "jpg", "png"):
         msg = "{0} is not a valid image type.".format(extension)
         print(msg)
+
 
     extension = "jpg" if extension == "jpeg" else extension
     file_name = ".".join([str(uuid.uuid4()), extension])
@@ -118,6 +120,53 @@ class PersonViewSet(viewsets.ModelViewSet):
                             image3=image3)
 
 
+class guests(APIView):
+    authentication_classes = (authentication.TokenAuthentication,)
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, format=None):
+        """
+        List all Guests ID's and Creators ID's
+        """
+        guests = Guest.objects.all()
+        ids = [[guest.id_mongo, guest.id_creador] for guest in Guest]
+        return ids
+    
+    def post(self, request, format=None):
+        """
+        Ceación de un invitado
+        """
+        try:
+            id_mongo = request.data.get('idMongo')
+            id_creador = request.data.get('idCreador')
+        except:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+        data = request.data
+        image1 = toImage(data.get('image1'))
+        image1 = face_recognition.face_encodings(face_recognition.load_image_file(image1))[0]
+        image1 = ','.join(str(item) for item in image1)
+        image2 = toImage(data.get('image2'))
+        image2 = face_recognition.face_encodings(face_recognition.load_image_file(image2))[0]
+        image2 = ','.join(str(item) for item in image2)
+        image3 = toImage(data.get('image3'))
+        image3 = face_recognition.face_encodings(face_recognition.load_image_file(image3))[0]
+        image3 = ','.join(str(item) for item in image3)
+
+        guest = Guest()
+        guest.image1 = image1
+        guest.image2 = image2
+        guest.image3 = image3
+        guest.date_image1 = datetime.now()
+        guest.date_image2 = datetime.now()
+        guest.date_image3 = datetime.now()
+        creador = Person.object.filter(id_mongo=id_mongo)
+        if creador:
+            guest.creador = creador
+        guest.save()
+        return(status.HTTP_201_CREATED)
+
+
 class getId(APIView):
     authentication_classes = (authentication.TokenAuthentication,)
     permission_classes = (permissions.AllowAny,)
@@ -133,7 +182,6 @@ class getId(APIView):
         """
         Post para identificar una persona
         """
-        print(self.request.data.get('image'))
         image = toImage(self.request.data.get('image'))
         matching = prediction(image)
         matching_status = matching[0]

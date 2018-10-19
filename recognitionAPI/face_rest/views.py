@@ -107,12 +107,15 @@ class PersonViewSet(viewsets.ModelViewSet):
         image1 = toImage(self.request.data.get('image1'))
         image1 = face_recognition.face_encodings(face_recognition.load_image_file(image1))[0]
         image1 = ','.join(str(item) for item in image1)
+        date_image1 = datetime.now()
         image2 = toImage(self.request.data.get('image2'))
         image2 = face_recognition.face_encodings(face_recognition.load_image_file(image2))[0]
         image2 = ','.join(str(item) for item in image2)
+        date_image2 = datetime.now()
         image3 = toImage(self.request.data.get('image3'))
         image3 = face_recognition.face_encodings(face_recognition.load_image_file(image3))[0]
         image3 = ','.join(str(item) for item in image3)
+        date_image3 = datetime.now()
 
         serializer.save(id_mongo=self.request.data.get('idMongo'),
                             image1=image1,

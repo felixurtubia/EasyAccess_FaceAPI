@@ -214,7 +214,7 @@ def updateUserImage(image, id_mongo):
     print("Updating user image")
     image = face_recognition.face_encodings(face_recognition.load_image_file(image))[0]
     image = ','.join(str(item) for item in image)
-    user = Person.objects.filter(id_mongo=id_mongo)
+    user = Person.objects.filter(id_mongo=id_mongo)[0]
     date_1 = user.date_image1
     date_2 = user.date_image2
     date_3 = user.date_image3

@@ -214,10 +214,13 @@ def updateUserImage(image, id_mongo):
     print("Updating user image")
     image = face_recognition.face_encodings(face_recognition.load_image_file(image))[0]
     image = ','.join(str(item) for item in image)
-    user = Person.objects.filter(id_mongo=id_mongo)[0]
+    user = Person.objects.get(id_mongo=id_mongo)[0]
+    print("El usuario es:  ", user)
+
     date_1 = user.date_image1
     date_2 = user.date_image2
     date_3 = user.date_image3
+
 
     if(date_1 > date_2 and date_1 > date_3):
         user.date_1 = datetime.now()

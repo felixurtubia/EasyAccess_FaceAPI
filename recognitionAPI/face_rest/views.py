@@ -30,8 +30,6 @@ from django.core.files.base import ContentFile
 
 def toImage(base64_data):
     # Strip data header if it exists
-    print("Aqui va la imagen")
-    print(base64_data)
     base64_data = re.sub(r"^data\:.+base64\,(.+)$", r"\1", base64_data)
 
     # Try to decode the file. Return validation error if it fails.
@@ -116,8 +114,20 @@ class PersonViewSet(viewsets.ModelViewSet):
         image3 = face_recognition.face_encodings(face_recognition.load_image_file(image3))[0]
         image3 = ','.join(str(item) for item in image3)
         date_3 = datetime.now()
+        guest = self.request.get("isGuest")
 
-        serializer.save(id_mongo=self.request.data.get('idMongo'),
+        if (guest):
+            serializer.save(id_mongo=self.request.data.get('idMongo'),
+                            image1=image1,
+                            date_image1=date_1,
+                            image2=image2,
+                            date_image2=date_2,
+                            image3=image3,
+                            date_image3=date_3,
+                            guest=True,
+                            id_creador = self.request.data.get("idCreator"))
+        else:
+            serializer.save(id_mongo=self.request.data.get('idMongo'),
                             image1=image1,
                             date_image1=date_1,
                             image2=image2,
@@ -159,10 +169,7 @@ class guests(APIView):
         image3 = face_recognition.face_encodings(face_recognition.load_image_file(image3))[0]
         image3 = ','.join(str(item) for item in image3)
 
-        guest = Guest()
-        guest.image1 = image1
-        guest.image2 = image2
-        guest.image3 = image3
+        guest = Guest(image1=image1, image2=image2, image3=image3)
         guest.date_image1 = datetime.now()
         guest.date_image2 = datetime.now()
         guest.date_image3 = datetime.now()
@@ -195,7 +202,10 @@ class getId(APIView):
             """User Identified Correctly"""
             person = matching[2]
             updateUserImage(image, person)
-            return Response(status=status.HTTP_202_ACCEPTED ,data = [0, matching[1], person.id_creador])
+            if (person.guest):
+                return Response(status=status.HTTP_202_ACCEPTED ,data = [1, matching[1], person.id_creador])
+            else:
+                return Response(status=status.HTTP_202_ACCEPTED ,data = [0, matching[1], person.id_creador])
         elif matching_status == 1:
             """User Not Identified"""
             return Response(status=status.HTTP_403_FORBIDDEN)

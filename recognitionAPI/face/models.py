@@ -23,6 +23,7 @@ class Person(models.Model):
     date_image2 = models.DateTimeField(null=True)
     image3 = models.CharField(null=True, max_length=10000000)
     date_image3 = models.DateTimeField(null=True)
+    guest = models.BooleanField(default=False)
 
     class Meta:
         ordering = ('created',)

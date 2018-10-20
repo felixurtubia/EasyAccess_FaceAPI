@@ -38,6 +38,8 @@ class PersonSerializer(serializers.ModelSerializer):
     image1 = serializers.CharField(required=False, max_length=10000000)
     image2 = serializers.CharField(required=False, max_length=10000000)
     image3 = serializers.CharField(required=False, max_length=10000000) 
+    guest = serializers.BooleanField(default=False)
+    id_creador = serializer.CharField(required=False)
 
     def save(self, **kwargs):
         # Will be done on every save
@@ -47,6 +49,6 @@ class PersonSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Person
-        fields = ['pk','created','updated','id_mongo','image1','image2','image3']
+        fields = ['pk','created','updated','id_mongo','image1','image2','image3', 'guest', 'id_creador']
         
     

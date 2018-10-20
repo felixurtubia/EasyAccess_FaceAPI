@@ -166,10 +166,8 @@ class guests(APIView):
         guest.date_image1 = datetime.now()
         guest.date_image2 = datetime.now()
         guest.date_image3 = datetime.now()
-        creador = Person.object.filter(id_mongo=id_mongo)
-        if creador:
-            guest.creador = creador
-        guest.save()
+        guest.id_mongo = id_mongo
+        guest.id_creador = id_creador
         return(status.HTTP_201_CREATED)
 
 
@@ -195,7 +193,7 @@ class getId(APIView):
         if matching_status == 0:
             """User Identified Correctly"""
             updateUserImage(image, matching[2])
-            return Response(data = matching[1])
+            return Response(status=status.HTTP_202_ACCEPTED ,data = matching[1])
         elif matching_status == 1:
             """User Not Identified"""
             return Response(status=status.HTTP_403_FORBIDDEN)

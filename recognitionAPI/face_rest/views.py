@@ -168,6 +168,7 @@ class guests(APIView):
         guest.date_image3 = datetime.now()
         guest.id_mongo = id_mongo
         guest.id_creador = id_creador
+        guest.save()
         return Response(status=status.HTTP_201_CREATED)
 
 

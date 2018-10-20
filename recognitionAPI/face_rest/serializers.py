@@ -39,7 +39,7 @@ class PersonSerializer(serializers.ModelSerializer):
     image2 = serializers.CharField(required=False, max_length=10000000)
     image3 = serializers.CharField(required=False, max_length=10000000) 
     guest = serializers.BooleanField(default=False)
-    id_creador = serializer.CharField(required=False)
+    id_creador = serializers.CharField(required=False)
 
     def save(self, **kwargs):
         # Will be done on every save

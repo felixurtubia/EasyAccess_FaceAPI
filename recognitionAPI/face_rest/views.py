@@ -114,7 +114,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         image3 = face_recognition.face_encodings(face_recognition.load_image_file(image3))[0]
         image3 = ','.join(str(item) for item in image3)
         date_3 = datetime.now()
-        guest = self.request.get("isGuest")
+        guest = self.request.data.get("isGuest")
 
         if (guest):
             serializer.save(id_mongo=self.request.data.get('idMongo'),

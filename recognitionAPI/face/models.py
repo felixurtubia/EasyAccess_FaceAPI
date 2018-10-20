@@ -41,5 +41,3 @@ class Guest(models.Model):
     date_image2 = models.DateTimeField(null=True)
     image3 = models.CharField(null=True, max_length=10000000)
     date_image3 = models.DateTimeField(null=True)
-    idCreador = models.CharField(null=True, max_length=10000)
-

@@ -192,20 +192,21 @@ class getId(APIView):
 
         if matching_status == 0:
             """User Identified Correctly"""
-            updateUserImage(image, matching[2])
-            return Response(status=status.HTTP_202_ACCEPTED ,data = matching[1])
+            person = matching[2]
+            updateUserImage(image, person)
+            return Response(status=status.HTTP_202_ACCEPTED ,data = [0, matching[1], person.id_creador])
         elif matching_status == 1:
             """User Not Identified"""
             return Response(status=status.HTTP_403_FORBIDDEN)
         elif matching_status == 2:
             """Invalid Foto"""
-            return Response()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         elif matching_status == 3:
             """More Than one USer in the Foto"""
-            return Response()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
             """There was an unknown problem"""
-            return Response()
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 def updateUserImage(image, user):

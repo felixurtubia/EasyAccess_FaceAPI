@@ -30,6 +30,8 @@ from django.core.files.base import ContentFile
 
 def toImage(base64_data):
     # Strip data header if it exists
+    print("Esta es la imagen: ")
+    print(base64_data)
     base64_data = re.sub(r"^data\:.+base64\,(.+)$", r"\1", base64_data)
 
     # Try to decode the file. Return validation error if it fails.

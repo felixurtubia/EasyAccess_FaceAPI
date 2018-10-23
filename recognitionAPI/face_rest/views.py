@@ -199,7 +199,8 @@ class getId(APIView):
         image = toImage(self.request.data.get('image'))
         matching = prediction(image)
         matching_status = matching[0]
-
+        print("Esta es la imagen 1:")
+        print(image)
         if matching_status == 0:
             """User Identified Correctly"""
             person = matching[2]

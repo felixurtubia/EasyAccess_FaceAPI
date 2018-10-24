@@ -117,8 +117,9 @@ class PersonViewSet(viewsets.ModelViewSet):
         image3 = ','.join(str(item) for item in image3)
         date_3 = datetime.now()
         guest = self.request.data.get("isGuest")
+        print("Is guest ? ", guest)
 
-        if (guest):
+        if (guest or guest=="True"):
             serializer.save(id_mongo=self.request.data.get('idMongo'),
                             image1=image1,
                             date_image1=date_1,

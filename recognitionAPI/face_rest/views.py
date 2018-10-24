@@ -30,8 +30,8 @@ from django.core.files.base import ContentFile
 
 def toImage(base64_data):
     # Strip data header if it exists
-    print("Esta es la imagen: ")
-    print(base64_data)
+    #print("Esta es la imagen: ")
+    #print(base64_data)
     base64_data = re.sub(r"^data\:.+base64\,(.+)$", r"\1", base64_data)
 
     # Try to decode the file. Return validation error if it fails.
@@ -200,10 +200,10 @@ class getId(APIView):
         image = toImage(self.request.data.get('image'))
         matching = prediction(image)
         matching_status = matching[0]
-        print("Esta es la imagen 1:")
-        print(image)
+        #print("Esta es la imagen 1:")
+        #print(image)
         if matching_status == 0:
-            """User Identified Correctly"""
+            print("User Identified Correctly")
             person = matching[2]
             updateUserImage(image, person)
             if (person.guest):
@@ -211,16 +211,16 @@ class getId(APIView):
             else:
                 return Response(status=status.HTTP_202_ACCEPTED ,data = [0, matching[1], person.id_creador])
         elif matching_status == 1:
-            """User Not Identified"""
+            print("User Not Identified")
             return Response(status=status.HTTP_403_FORBIDDEN)
         elif matching_status == 2:
-            """Invalid Foto"""
+            print("Invalid Foto")
             return Response(status=status.HTTP_400_BAD_REQUEST)
         elif matching_status == 3:
-            """More Than one USer in the Foto"""
+            print("More Than one USer in the Foto")
             return Response(status=status.HTTP_400_BAD_REQUEST)
         else:
-            """There was an unknown problem"""
+            print("There was an unknown problem")
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -230,22 +230,25 @@ def updateUserImage(image, user):
     image = ','.join(str(item) for item in image)
     """user = Person.objects.get(id_mongo=id_mongo)
     user = user[0]"""
-    print("El usuario es:  ", user)
+    
 
     date_1 = user.date_image1
     date_2 = user.date_image2
     date_3 = user.date_image3
-
+    print("El usuario es:  {1}, con fechas de imagenes: {2}, {3}, {4}", user, date_1, date_2, date_3)
 
     if(date_1 > date_2 and date_1 > date_3):
+        print("Updated image 1")
         user.date_1 = datetime.now()
         user.image1 = image
         user.save()
     if(date_2 > date_1 and date_2 > date_3):
+        print("Updated image 2")
         user.date_2 = datetime.now()
         user.image2 = image
         user.save()
     if(date_3 > date_2 and date_3 > date_1):
+        print("Updated image 3")
         user.date_3 = datetime.now()
         user.image3 = image
         user.save()

@@ -30,8 +30,6 @@ from django.core.files.base import ContentFile
 
 def toImage(base64_data):
     # Strip data header if it exists
-    #print("Esta es la imagen: ")
-    #print(base64_data)
     base64_data = re.sub(r"^data\:.+base64\,(.+)$", r"\1", base64_data)
 
     # Try to decode the file. Return validation error if it fails.
@@ -200,8 +198,6 @@ class getId(APIView):
         image = toImage(self.request.data.get('image'))
         matching = prediction(image)
         matching_status = matching[0]
-        #print("Esta es la imagen 1:")
-        #print(image)
         if matching_status == 0:
             print("User Identified Correctly")
             person = matching[2]

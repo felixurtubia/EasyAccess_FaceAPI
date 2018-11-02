@@ -200,20 +200,21 @@ def updateUserImage(image, user):
     date_3 = user.date_image3
     print("El usuario es:  {1}, con fechas de imagenes: {2}, {3}, {4}", user, date_1, date_2, date_3)
 
-    if(date_1 < date_2 and date_1 < date_3):
+    if(date_1 <= date_2 and date_1 <= date_3):
         print("Updated image 1")
         user.date_1 = datetime.now()
         user.image1 = image
         user.save()
-    if(date_2 < date_1 and date_2 < date_3):
+    if(date_2 <= date_1 and date_2 <= date_3):
         print("Updated image 2")
         user.date_2 = datetime.now()
         user.image2 = image
         user.save()
-    if(date_3 < date_2 and date_3 < date_1):
+    if(date_3 <= date_2 and date_3 <= date_1):
         print("Updated image 3")
         user.date_3 = datetime.now()
         user.image3 = image
         user.save()
     else:
         print("Ocurrió un problema con las fechas")
+    return

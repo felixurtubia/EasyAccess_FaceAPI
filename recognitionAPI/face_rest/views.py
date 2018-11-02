@@ -92,6 +92,16 @@ def prediction(image, model_path=None, distance_threshold=0.5):
 class PersonViewSet(viewsets.ModelViewSet):
     queryset = Person.objects.all()
     serializer_class = PersonSerializer
+    
+    def destroy(self, request, *args, **kwargs):
+        print("Args:", args)
+        print("Kwargs:", kwargs)
+        try:
+            instance = self.get_object()
+            self.perform_destroy(instance)
+        except Http404:
+            pass
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -117,7 +127,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         guest = self.request.data.get("isGuest")
         print("Is guest ? ", guest)
 
-        if (guest or guest=="True"):
+        if (guest or guest=="True" or guest=="true"):
             serializer.save(id_mongo=self.request.data.get('idMongo'),
                             image1=image1,
                             date_image1=date_1,
@@ -135,49 +145,6 @@ class PersonViewSet(viewsets.ModelViewSet):
                             date_image2=date_2,
                             image3=image3,
                             date_image3=date_3)
-
-
-class guests(APIView):
-    authentication_classes = (authentication.TokenAuthentication,)
-    permission_classes = (permissions.AllowAny,)
-
-    def get(self, request, format=None):
-        """
-        List all Guests ID's and Creators ID's
-        """
-        guests = Guest.objects.all()
-        ids = [[guest.id_mongo, guest.id_creador] for guest in Guest]
-        return ids
-    
-    def post(self, request, format=None):
-        """
-        Ceación de un invitado
-        """
-        try:
-            id_mongo = request.data.get('idMongo')
-            id_creador = request.data.get('idCreador')
-        except:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-
-        data = request.data
-        image1 = toImage(data.get('image1'))
-        image1 = face_recognition.face_encodings(face_recognition.load_image_file(image1))[0]
-        image1 = ','.join(str(item) for item in image1)
-        image2 = toImage(data.get('image2'))
-        image2 = face_recognition.face_encodings(face_recognition.load_image_file(image2))[0]
-        image2 = ','.join(str(item) for item in image2)
-        image3 = toImage(data.get('image3'))
-        image3 = face_recognition.face_encodings(face_recognition.load_image_file(image3))[0]
-        image3 = ','.join(str(item) for item in image3)
-
-        guest = Guest(image1=image1, image2=image2, image3=image3)
-        guest.date_image1 = datetime.now()
-        guest.date_image2 = datetime.now()
-        guest.date_image3 = datetime.now()
-        guest.id_mongo = id_mongo
-        guest.id_creador = id_creador
-        guest.save()
-        return Response(status=status.HTTP_201_CREATED)
 
 
 class getId(APIView):
@@ -233,17 +200,17 @@ def updateUserImage(image, user):
     date_3 = user.date_image3
     print("El usuario es:  {1}, con fechas de imagenes: {2}, {3}, {4}", user, date_1, date_2, date_3)
 
-    if(date_1 > date_2 and date_1 > date_3):
+    if(date_1 < date_2 and date_1 < date_3):
         print("Updated image 1")
         user.date_1 = datetime.now()
         user.image1 = image
         user.save()
-    if(date_2 > date_1 and date_2 > date_3):
+    if(date_2 < date_1 and date_2 < date_3):
         print("Updated image 2")
         user.date_2 = datetime.now()
         user.image2 = image
         user.save()
-    if(date_3 > date_2 and date_3 > date_1):
+    if(date_3 < date_2 and date_3 < date_1):
         print("Updated image 3")
         user.date_3 = datetime.now()
         user.image3 = image

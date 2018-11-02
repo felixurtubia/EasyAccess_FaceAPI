@@ -95,9 +95,7 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     
     def destroy(self, request, *args, **kwargs):
-        print("Args: ", args)
-        print("Kwargs: ", kwargs)
-        print("primary key: ", kwargs['pk'])
+        print("User with id {1} is being deleted", kwargs['pk'])
         try:
             instance = get_object_or_404(Person, id_mongo=kwargs['pk'])
             self.perform_destroy(instance)

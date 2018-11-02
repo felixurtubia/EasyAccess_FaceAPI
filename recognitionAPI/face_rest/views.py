@@ -127,7 +127,7 @@ class PersonViewSet(viewsets.ModelViewSet):
         guest = self.request.data.get("isGuest")
         print("Is guest ? ", guest)
 
-        if (guest or guest=="True" or guest=="true"):
+        if (guest==True or guest=="True" or guest=="true"):
             serializer.save(id_mongo=self.request.data.get('idMongo'),
                             image1=image1,
                             date_image1=date_1,
@@ -144,7 +144,8 @@ class PersonViewSet(viewsets.ModelViewSet):
                             image2=image2,
                             date_image2=date_2,
                             image3=image3,
-                            date_image3=date_3)
+                            date_image3=date_3,
+                            guest=False)
 
 
 class getId(APIView):
@@ -205,12 +206,12 @@ def updateUserImage(image, user):
         user.date_1 = datetime.now()
         user.image1 = image
         user.save()
-    if(date_2 <= date_1 and date_2 <= date_3):
+    elif(date_2 <= date_1 and date_2 <= date_3):
         print("Updated image 2")
         user.date_2 = datetime.now()
         user.image2 = image
         user.save()
-    if(date_3 <= date_2 and date_3 <= date_1):
+    elif(date_3 <= date_2 and date_3 <= date_1):
         print("Updated image 3")
         user.date_3 = datetime.now()
         user.image3 = image

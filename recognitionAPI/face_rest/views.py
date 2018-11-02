@@ -11,6 +11,7 @@ from sklearn import neighbors
 import pickle
 import math
 from datetime import datetime
+from django.shortcuts import get_object_or_404
 
 from rest_framework.views import APIView
 from rest_framework import authentication, permissions
@@ -94,12 +95,13 @@ class PersonViewSet(viewsets.ModelViewSet):
     serializer_class = PersonSerializer
     
     def destroy(self, request, *args, **kwargs):
-        print("Args:", args)
-        print("Kwargs:", kwargs)
+        print("Args: ", args)
+        print("Kwargs: ", kwargs)
+        print("primary key: ", kwargs['pk'])
         try:
-            instance = self.get_object()
+            instance = get_object_or_404(Person, id_mongo=kwars['pk'])
             self.perform_destroy(instance)
-        except Http404:
+        except err:
             pass
         return Response(status=status.HTTP_204_NO_CONTENT)
 

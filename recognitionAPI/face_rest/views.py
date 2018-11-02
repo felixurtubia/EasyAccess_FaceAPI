@@ -11,7 +11,7 @@ from sklearn import neighbors
 import pickle
 import math
 from datetime import datetime
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, Http404
 
 from rest_framework.views import APIView
 from rest_framework import authentication, permissions
@@ -99,9 +99,9 @@ class PersonViewSet(viewsets.ModelViewSet):
         print("Kwargs: ", kwargs)
         print("primary key: ", kwargs['pk'])
         try:
-            instance = get_object_or_404(Person, id_mongo=kwars['pk'])
+            instance = get_object_or_404(Person, id_mongo=kwargs['pk'])
             self.perform_destroy(instance)
-        except err:
+        except Http404:
             pass
         return Response(status=status.HTTP_204_NO_CONTENT)
 

@@ -72,19 +72,19 @@ def prediction(image, model_path=None, distance_threshold=0.5):
     for persona in personas:
         encoding1 = persona.image1.split(',')
         encoding1 = [float(item) for item in encoding1]
-        match1 = face_recognition.compare_faces([encoding1], new_faces_encodings[0])
+        match1 = face_recognition.compare_faces([encoding1], new_faces_encodings[0], tolerance=0.5)
         if True in match1:
             return [0, persona.id_mongo, persona]
 
         encoding2 = persona.image2.split(',')
         encoding2 = [float(item) for item in encoding2]
-        match2 = face_recognition.compare_faces([encoding2], new_faces_encodings[0])
+        match2 = face_recognition.compare_faces([encoding2], new_faces_encodings[0], tolerance=0.5)
         if True in match2:
             return [0, persona.id_mongo, persona]
             
         encoding3 = persona.image3.split(',')
         encoding3 = [float(item) for item in encoding3]
-        match3 = face_recognition.compare_faces([encoding3], new_faces_encodings[0])
+        match3 = face_recognition.compare_faces([encoding3], new_faces_encodings[0], tolerance=0.5)
         if True in match3:
             return [0, persona.id_mongo, persona]
 

@@ -11,6 +11,7 @@ from sklearn import neighbors
 import pickle
 import math
 from datetime import datetime
+from django.utils import timezone
 from django.shortcuts import get_object_or_404, Http404
 
 from rest_framework.views import APIView
@@ -115,15 +116,15 @@ class PersonViewSet(viewsets.ModelViewSet):
         image1 = toImage(self.request.data.get('image1'))
         image1 = face_recognition.face_encodings(face_recognition.load_image_file(image1))[0]
         image1 = ','.join(str(item) for item in image1)
-        date_1 = datetime.now()
+        date_1 = timezone.now()
         image2 = toImage(self.request.data.get('image2'))
         image2 = face_recognition.face_encodings(face_recognition.load_image_file(image2))[0]
         image2 = ','.join(str(item) for item in image2)
-        date_2 = datetime.now()
+        date_2 = timezone.now()
         image3 = toImage(self.request.data.get('image3'))
         image3 = face_recognition.face_encodings(face_recognition.load_image_file(image3))[0]
         image3 = ','.join(str(item) for item in image3)
-        date_3 = datetime.now()
+        date_3 = timezone.now()
         guest = self.request.data.get("isGuest")
         print("Is guest ? ", guest)
 
@@ -203,17 +204,17 @@ def updateUserImage(image, user):
 
     if(date_1 <= date_2 and date_1 <= date_3):
         print("Updated image 1")
-        user.date_1 = datetime.now()
+        user.date_1 = timezone.now()
         user.image1 = image
         user.save()
     elif(date_2 <= date_1 and date_2 <= date_3):
         print("Updated image 2")
-        user.date_2 = datetime.now()
+        user.date_2 = timezone.now()
         user.image2 = image
         user.save()
     elif(date_3 <= date_2 and date_3 <= date_1):
         print("Updated image 3")
-        user.date_3 = datetime.now()
+        user.date_3 = timezone.now()
         user.image3 = image
         user.save()
     else:

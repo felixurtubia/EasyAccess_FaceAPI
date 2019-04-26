@@ -81,9 +81,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         #'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'NAME': 'EasyAccess',
-        'USER':'postgres',
+        'USER':'boldware',
         'PASSWORD':'boldwareeasyaccess',
-        'HOST':'51.15.240.129',
+        'HOST':'easyaccess-face-database.cghxllrdyqzh.us-east-1.rds.amazonaws.com',
         'PORT':'5432',
     }
 }
